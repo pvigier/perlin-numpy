@@ -13,7 +13,8 @@ def generate_2d_perlin(shape, res, octaves=1, persistance=0.5):
         d = (shape[0] // (k*res[0]), shape[1] // (k*res[1]))
         grid = (coordinates * k) % 1
         # Gradients
-        gradients = 2*np.random.rand(k*res[0]+1, k*res[1]+1, 2) - 1
+        angles = 2*np.pi*np.random.rand(k*res[0]+1, k*res[1]+1)
+        gradients = np.sqrt(2)*np.dstack((np.cos(angles), np.sin(angles)))
         g00 = gradients[0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1)
         g10 = gradients[1:,0:-1].repeat(d[0], 0).repeat(d[1], 1)
         g01 = gradients[0:-1,1:].repeat(d[0], 0).repeat(d[1], 1)
