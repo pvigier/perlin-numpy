@@ -1,6 +1,6 @@
 # perlin-numpy
 
-## Description
+## Description
 
 A fast and simple perlin noise generator using numpy.
 
