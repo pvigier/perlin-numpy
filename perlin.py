@@ -1,6 +1,6 @@
 import numpy as np
 
-def generate_2d_perlin(shape, res, octaves=1, persistance=0.5):
+def generate_2d_perlin(shape, res, octaves=1, persistence=0.5):
     def f(t):
         return 6*t**5 - 15*t**4 + 10*t**3
     
@@ -31,7 +31,7 @@ def generate_2d_perlin(shape, res, octaves=1, persistance=0.5):
         noise += amplitude * ((1-t[:,:,1])*n0 + t[:,:,1]*n1)
         # Update
         k *= 2
-        amplitude *= persistance
+        amplitude *= persistence
         
     return noise
     
