@@ -1,5 +1,7 @@
 # perlin-numpy
 
+I wrote an [article](https://pvigier.github.io/2018/06/13/perlin-noise-numpy.html) about this project on my blog, feel free to read it!
+
 ## Description
 
 A fast and simple perlin noise generator using numpy.
