@@ -24,5 +24,5 @@ Note: `shape` must be a multiple of `octaves*res`
 
 ## Gallery
 
-![Perlin noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/perlin.png)
-![Fractal noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/fractal.png)
+![Perlin noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/perlin2d.png)
+![Fractal noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/fractal2d.png)
