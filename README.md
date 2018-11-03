@@ -1,6 +1,6 @@
 # perlin-numpy
 
-I wrote an [article](https://pvigier.github.io/2018/06/13/perlin-noise-numpy.html) about this project on my blog, feel free to read it!
+I wrote two articles on my blog about this project, the [first one](https://pvigier.github.io/2018/06/13/perlin-noise-numpy.html)  is about the generation of 2D noise while the [second one](https://pvigier.github.io/2018/11/02/3d-perlin-noise-numpy.html) is about the generation of 3D noise, feel free to read them!
 
 ## Description
 
