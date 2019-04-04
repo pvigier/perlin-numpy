@@ -22,7 +22,7 @@ The function `generate_fractal_noise_2d` combines several octaves of 2D perlin n
 * `octaves`: number of octaves in the noise (int)
 * `persistence`: scaling factor between two octaves (float)
 
-Note: `shape` must be a multiple of `octaves*res`
+Note: `shape` must be a multiple of `2^(octaves-1)*res`
 
 
 ### 3D noise
@@ -41,7 +41,7 @@ The function `generate_fractal_noise_2d` combines several octaves of 3D perlin n
 * `octaves`: number of octaves in the noise (int)
 * `persistence`: scaling factor between two octaves (float)
 
-Note: `shape` must be a multiple of `octaves*res`
+Note: `shape` must be a multiple of `2^(octaves-1)*res`
 
 ## Gallery
 
