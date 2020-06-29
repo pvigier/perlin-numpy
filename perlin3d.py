@@ -1,9 +1,9 @@
 import numpy as np
-    
-def generate_perlin_noise_3d(shape, res):
+
+def generate_perlin_noise_3d(shape, res, tileable=(False, False, False)):
     def f(t):
         return 6*t**5 - 15*t**4 + 10*t**3
-    
+
     delta = (res[0] / shape[0], res[1] / shape[1], res[2] / shape[2])
     d = (shape[0] // res[0], shape[1] // res[1], shape[2] // res[2])
     grid = np.mgrid[0:res[0]:delta[0],0:res[1]:delta[1],0:res[2]:delta[2]]
@@ -12,6 +12,12 @@ def generate_perlin_noise_3d(shape, res):
     theta = 2*np.pi*np.random.rand(res[0]+1, res[1]+1, res[2]+1)
     phi = 2*np.pi*np.random.rand(res[0]+1, res[1]+1, res[2]+1)
     gradients = np.stack((np.sin(phi)*np.cos(theta), np.sin(phi)*np.sin(theta), np.cos(phi)), axis=3)
+    if tileable[0]:
+        gradients[-1,:,:] = gradients[0,:,:]
+    if tileable[1]:
+        gradients[:,-1,:] = gradients[:,0,:]
+    if tileable[2]:
+        gradients[:,:,-1] = gradients[:,:,0]
     g000 = gradients[0:-1,0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
     g100 = gradients[1:  ,0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
     g010 = gradients[0:-1,1:  ,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
@@ -38,24 +44,24 @@ def generate_perlin_noise_3d(shape, res):
     n0 = (1-t[:,:,:,1])*n00 + t[:,:,:,1]*n10
     n1 = (1-t[:,:,:,1])*n01 + t[:,:,:,1]*n11
     return ((1-t[:,:,:,2])*n0 + t[:,:,:,2]*n1)
-    
-def generate_fractal_noise_3d(shape, res, octaves=1, persistence=0.5):
+
+def generate_fractal_noise_3d(shape, res, octaves=1, persistence=0.5, tileable=(False, False, False)):
     noise = np.zeros(shape)
     frequency = 1
     amplitude = 1
     for _ in range(octaves):
-        noise += amplitude * generate_perlin_noise_3d(shape, (frequency*res[0], frequency*res[1], frequency*res[2]))
+        noise += amplitude * generate_perlin_noise_3d(shape, (frequency*res[0], frequency*res[1], frequency*res[2]), tileable)
         frequency *= 2
         amplitude *= persistence
     return noise
-    
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib.animation as animation
-    
+
     np.random.seed(0)
-    noise = generate_fractal_noise_3d((32, 256, 256), (1, 4, 4), 4)
-    
+    noise = generate_fractal_noise_3d((32, 256, 256), (1, 4, 4), 4, tileable=(True, False, False))
+
     fig = plt.figure()
     images = [[plt.imshow(layer, cmap='gray', interpolation='lanczos', animated=True)] for layer in noise]
     animation = animation.ArtistAnimation(fig, images, interval=50, blit=True)
