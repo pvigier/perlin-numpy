@@ -30,13 +30,13 @@ def generate_perlin_noise_2d(shape, res, tileable=(False, False)):
     n1 = n01*(1-t[:,:,0]) + t[:,:,0]*n11
     return np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
 
-def generate_fractal_noise_2d(shape, res, octaves=1, persistence=0.5, tileable=(False, False)):
+def generate_fractal_noise_2d(shape, res, octaves=1, persistence=0.5, lacunarity=2, tileable=(False, False)):
     noise = np.zeros(shape)
     frequency = 1
     amplitude = 1
     for _ in range(octaves):
         noise += amplitude * generate_perlin_noise_2d(shape, (frequency*res[0], frequency*res[1]), tileable)
-        frequency *= 2
+        frequency *= lacunarity
         amplitude *= persistence
     return noise
 

@@ -46,13 +46,13 @@ def generate_perlin_noise_3d(shape, res, tileable=(False, False, False)):
     n1 = (1-t[:,:,:,1])*n01 + t[:,:,:,1]*n11
     return ((1-t[:,:,:,2])*n0 + t[:,:,:,2]*n1)
 
-def generate_fractal_noise_3d(shape, res, octaves=1, persistence=0.5, tileable=(False, False, False)):
+def generate_fractal_noise_3d(shape, res, octaves=1, persistence=0.5, lacunarity=2, tileable=(False, False, False)):
     noise = np.zeros(shape)
     frequency = 1
     amplitude = 1
     for _ in range(octaves):
         noise += amplitude * generate_perlin_noise_3d(shape, (frequency*res[0], frequency*res[1], frequency*res[2]), tileable)
-        frequency *= 2
+        frequency *= lacunarity
         amplitude *= persistence
     return noise
 
