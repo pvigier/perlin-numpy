@@ -14,10 +14,11 @@ def generate_perlin_noise_2d(shape, res, tileable=(False, False)):
         gradients[-1,:] = gradients[0,:]
     if tileable[1]:
         gradients[:,-1] = gradients[:,0]
-    g00 = gradients[0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1)
-    g10 = gradients[1:  ,0:-1].repeat(d[0], 0).repeat(d[1], 1)
-    g01 = gradients[0:-1,1:  ].repeat(d[0], 0).repeat(d[1], 1)
-    g11 = gradients[1:  ,1:  ].repeat(d[0], 0).repeat(d[1], 1)
+    gradients = gradients.repeat(d[0], 0).repeat(d[1], 1)
+    g00 = gradients[    :-d[0],    :-d[1]]
+    g10 = gradients[d[0]:     ,    :-d[1]]
+    g01 = gradients[    :-d[0],d[1]:     ]
+    g11 = gradients[d[0]:     ,d[1]:     ]
     # Ramps
     n00 = np.sum(np.dstack((grid[:,:,0]  , grid[:,:,1]  )) * g00, 2)
     n10 = np.sum(np.dstack((grid[:,:,0]-1, grid[:,:,1]  )) * g10, 2)

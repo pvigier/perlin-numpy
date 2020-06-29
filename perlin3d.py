@@ -18,14 +18,15 @@ def generate_perlin_noise_3d(shape, res, tileable=(False, False, False)):
         gradients[:,-1,:] = gradients[:,0,:]
     if tileable[2]:
         gradients[:,:,-1] = gradients[:,:,0]
-    g000 = gradients[0:-1,0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g100 = gradients[1:  ,0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g010 = gradients[0:-1,1:  ,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g110 = gradients[1:  ,1:  ,0:-1].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g001 = gradients[0:-1,0:-1,1:  ].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g101 = gradients[1:  ,0:-1,1:  ].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g011 = gradients[0:-1,1:  ,1:  ].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g111 = gradients[1:  ,1:  ,1:  ].repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
+    gradients = gradients.repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
+    g000 = gradients[    :-d[0],    :-d[1],    :-d[2]]
+    g100 = gradients[d[0]:     ,    :-d[1],    :-d[2]]
+    g010 = gradients[    :-d[0],d[1]:     ,    :-d[2]]
+    g110 = gradients[d[0]:     ,d[1]:     ,    :-d[2]]
+    g001 = gradients[    :-d[0],    :-d[1],d[2]:     ]
+    g101 = gradients[d[0]:     ,    :-d[1],d[2]:     ]
+    g011 = gradients[    :-d[0],d[1]:     ,d[2]:     ]
+    g111 = gradients[d[0]:     ,d[1]:     ,d[2]:     ]
     # Ramps
     n000 = np.sum(np.stack((grid[:,:,:,0]  , grid[:,:,:,1]  , grid[:,:,:,2]  ), axis=3) * g000, 3)
     n100 = np.sum(np.stack((grid[:,:,:,0]-1, grid[:,:,:,1]  , grid[:,:,:,2]  ), axis=3) * g100, 3)
@@ -62,7 +63,8 @@ if __name__ == '__main__':
     np.random.seed(0)
     noise = generate_fractal_noise_3d((32, 256, 256), (1, 4, 4), 4, tileable=(True, False, False))
 
-    fig = plt.figure()
+    """fig = plt.figure()
     images = [[plt.imshow(layer, cmap='gray', interpolation='lanczos', animated=True)] for layer in noise]
     animation = animation.ArtistAnimation(fig, images, interval=50, blit=True)
-    plt.show()
+    plt.show()"""
+    #animation.save('fractal3d.gif', writer='imagemagick')
