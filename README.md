@@ -14,6 +14,15 @@ You can install this package via:
 pip3 install git+https://github.com/pvigier/perlin-numpy
 ```
 
+## Usage
+
+```python
+from perlin_numpy import (
+    generate_fractal_noise_2d, generate_fractal_noise_3d,
+    generate_perlin_noise_2d, generate_perlin_noise_3d
+)
+```
+
 ### 2D noise
 
 The function `generate_perlin_noise_2d` generates a 2D texture of perlin noise. Its parameters are:
