@@ -6,6 +6,14 @@ I wrote two articles on my blog about this project, the [first one](https://pvig
 
 A fast and simple perlin noise generator using numpy.
 
+## Installation
+
+You can install this package via:
+
+```
+pip3 install git+https://github.com/pvigier/perlin-numpy
+```
+
 ### 2D noise
 
 The function `generate_perlin_noise_2d` generates a 2D texture of perlin noise. Its parameters are:

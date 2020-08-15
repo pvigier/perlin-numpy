@@ -56,15 +56,15 @@ def generate_fractal_noise_3d(shape, res, octaves=1, persistence=0.5, lacunarity
         amplitude *= persistence
     return noise
 
-if __name__ == '__main__':
+def main():
     import matplotlib.pyplot as plt
     import matplotlib.animation as animation
 
     np.random.seed(0)
     noise = generate_fractal_noise_3d((32, 256, 256), (1, 4, 4), 4, tileable=(True, False, False))
 
-    """fig = plt.figure()
+    fig = plt.figure()
     images = [[plt.imshow(layer, cmap='gray', interpolation='lanczos', animated=True)] for layer in noise]
     animation = animation.ArtistAnimation(fig, images, interval=50, blit=True)
-    plt.show()"""
+    plt.show()
     #animation.save('fractal3d.gif', writer='imagemagick')
