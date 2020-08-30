@@ -66,9 +66,85 @@ The function `generate_fractal_noise_2d` combines several octaves of 3D perlin n
 
 Note: `shape` must be a multiple of `lacunarity^(octaves-1)*res`
 
-## Gallery
+## Recipes
+
+Note these snippets require [matplotlib](https://matplotlib.org/).
+
+### 2D Perlin and Fractal Noise
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from perlin_numpy import (
+    generate_perlin_noise_2d, generate_fractal_noise_2d
+)
+
+np.random.seed(0)
+noise = generate_perlin_noise_2d((256, 256), (8, 8))
+plt.imshow(noise, cmap='gray', interpolation='lanczos')
+plt.colorbar()
+
+np.random.seed(0)
+noise = generate_fractal_noise_2d((256, 256), (8, 8), 5)
+plt.figure()
+plt.imshow(noise, cmap='gray', interpolation='lanczos')
+plt.colorbar()
+plt.show()
+```
 
 ![2D Perlin noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/perlin2d.png)
 ![2D fractal noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/fractal2d.png)
-![3D Perlin noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/perlin3d.gif)
+
+### 3D Fractal Noise
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy as np
+from perlin_numpy import generate_fractal_noise_3d
+
+np.random.seed(0)
+noise = generate_fractal_noise_3d(
+    (32, 256, 256), (1, 4, 4), 4, tileable=(True, False, False)
+)
+
+fig = plt.figure()
+images = [
+    [plt.imshow(
+        layer, cmap='gray', interpolation='lanczos', animated=True
+    )]
+    for layer in noise
+]
+animation_3d = animation.ArtistAnimation(fig, images, interval=50, blit=True)
+plt.show()
+```
+
+
 ![3D fractal noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/fractal3d.gif)
+
+### 3D Perlin Noise
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy as np
+from perlin_numpy import generate_perlin_noise_3d
+
+np.random.seed(0)
+noise = generate_perlin_noise_3d(
+    (32, 256, 256), (1, 4, 4), tileable=(True, False, False)
+)
+
+fig = plt.figure()
+images = [
+    [plt.imshow(
+        layer, cmap='gray', interpolation='lanczos', animated=True
+    )]
+    for layer in noise
+]
+animation_3d = animation.ArtistAnimation(fig, images, interval=50, blit=True)
+plt.show()
+```
+
+
+![3D Perlin noise](https://github.com/pvigier/perlin-numpy/raw/master/examples/perlin3d.gif)

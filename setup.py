@@ -1,7 +1,4 @@
-from setuptools import setup, find_packages
-
-with open("requirements.txt") as f:
-    dependencies = f.readlines()
+from setuptools import find_packages, setup
 
 setup(
     name="perlin-numpy",
@@ -11,13 +8,8 @@ setup(
     url="https://github.com/pvigier/perlin-numpy",
     author="pvigier",
     license="MIT",
-    entry_points={
-        "console_scripts":
-        [
-            "perlin-2d-noise=perlin_numpy.perlin2d:main",
-            "perlin-3d-noise=perlin_numpy.perlin3d:main"
-        ],
-    },
-    install_requires=dependencies,
+    install_requires=[
+        "numpy>=1.15"
+    ],
     zip_safe=False
 )

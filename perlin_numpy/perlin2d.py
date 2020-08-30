@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -13,11 +12,12 @@ def generate_perlin_noise_2d(
 
     Args:
         shape: The shape of the generated array (tuple of two ints).
+            This must be a multple of res.
         res: The number of periods of noise to generate along each
-            axis (tuple of two ints). Note res[0] must divide shape[0]
-            and res[1] must divide shape[1].
+            axis (tuple of two ints). Note shape must be a multiple of
+            res.
         tileable: If the noise should be tileable along each axis
-            (tuple of two bools). Defaults to (False, False)
+            (tuple of two bools). Defaults to (False, False).
         interpolant: The interpolation function, defaults to
             t*t*t*(t*(t*6 - 15) + 10).
 
@@ -25,8 +25,7 @@ def generate_perlin_noise_2d(
         A numpy array of shape shape with the generated noise.
 
     Raises:
-        ValueError: If res[0] does not divide shape[0] or res[1] does
-            not divide shape[1].
+        ValueError: If shape is not a multiple of res.
     """
     delta = (res[0] / shape[0], res[1] / shape[1])
     d = (shape[0] // res[0], shape[1] // res[1])
@@ -67,8 +66,8 @@ def generate_fractal_noise_2d(
         shape: The shape of the generated array (tuple of two ints).
             This must be a multiple of lacunarity**(octaves-1)*res.
         res: The number of periods of noise to generate along each
-            axis (tuple of two ints). Note res[0] must divide shape[0]
-            and res[1] must divide shape[1].
+            axis (tuple of two ints). Note shape must be a multiple of
+            (lacunarity**(octaves-1)*res).
         octaves: The number of octaves in the noise. Defaults to 1.
         persistence: The scaling factor between two octaves.
         lacunarity: The frequency factor between two octaves.
@@ -82,8 +81,8 @@ def generate_fractal_noise_2d(
         combining several octaves of perlin noise.
 
     Raises:
-        ValueError: If (lacunarity**(octaves-1)*res) does not divide
-            shape.
+        ValueError: If shape is not a multiple of
+            (lacunarity**(octaves-1)*res).
     """
     noise = np.zeros(shape)
     frequency = 1
@@ -95,17 +94,3 @@ def generate_fractal_noise_2d(
         frequency *= lacunarity
         amplitude *= persistence
     return noise
-
-
-def main():
-    np.random.seed(0)
-    noise = generate_perlin_noise_2d((256, 256), (8, 8))
-    plt.imshow(noise, cmap='gray', interpolation='lanczos')
-    plt.colorbar()
-
-    np.random.seed(0)
-    noise = generate_fractal_noise_2d((256, 256), (8, 8), 5)
-    plt.figure()
-    plt.imshow(noise, cmap='gray', interpolation='lanczos')
-    plt.colorbar()
-    plt.show()

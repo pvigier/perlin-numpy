@@ -1,5 +1,3 @@
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
 import numpy as np
 
 from .perlin2d import interpolant
@@ -13,11 +11,12 @@ def generate_perlin_noise_3d(
 
     Args:
         shape: The shape of the generated array (tuple of three ints).
+            This must be a multiple of res.
         res: The number of periods of noise to generate along each
             axis (tuple of three ints). Note shape must be a multiple
             of res.
         tileable: If the noise should be tileable along each axis
-            (tuple of three bools). Defaults to (False, False, False)
+            (tuple of three bools). Defaults to (False, False, False).
         interpolant: The interpolation function, defaults to
             t*t*t*(t*(t*6 - 15) + 10).
 
@@ -85,7 +84,7 @@ def generate_fractal_noise_3d(
             This must be a multiple of lacunarity**(octaves-1)*res.
         res: The number of periods of noise to generate along each
             axis (tuple of three ints). Note shape must be a multiple of
-            res.
+            (lacunarity**(octaves-1)*res).
         octaves: The number of octaves in the noise. Defaults to 1.
         persistence: The scaling factor between two octaves.
         lacunarity: The frequency factor between two octaves.
@@ -115,21 +114,3 @@ def generate_fractal_noise_3d(
         frequency *= lacunarity
         amplitude *= persistence
     return noise
-
-
-def main():
-    np.random.seed(0)
-    noise = generate_fractal_noise_3d(
-        (32, 256, 256), (1, 4, 4), 4, tileable=(True, False, False)
-    )
-
-    fig = plt.figure()
-    images = [
-        [plt.imshow(
-            layer, cmap='gray', interpolation='lanczos', animated=True
-        )]
-        for layer in noise
-    ]
-    animation_3d = animation.ArtistAnimation(fig, images, interval=50, blit=True)
-    plt.show()
-    #animation.save('fractal3d.gif', writer='imagemagick')
