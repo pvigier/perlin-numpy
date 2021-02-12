@@ -1,8 +1,16 @@
 import numpy as np
 
+from warnings import warn
 
 def interpolant(t):
     return t*t*t*(t*(t*6 - 15) + 10)
+    
+
+def check_res(res, shape):
+    for dim, dim_res in enumerate(res):
+        assert shape[dim]%dim_res == 0, f'Dimension {dim} has a length of {shape[dim]} which can not be divided using the resolution specified: {dim_res}'
+
+    return
 
 
 def generate_perlin_noise_2d(
@@ -27,8 +35,11 @@ def generate_perlin_noise_2d(
     Raises:
         ValueError: If shape is not a multiple of res.
     """
+    check_res(res, shape)
+
     delta = (res[0] / shape[0], res[1] / shape[1])
     d = (shape[0] // res[0], shape[1] // res[1])
+
     grid = np.mgrid[0:res[0]:delta[0], 0:res[1]:delta[1]]\
              .transpose(1, 2, 0) % 1
     
@@ -43,7 +54,7 @@ def generate_perlin_noise_2d(
         gradients[:,-1] = gradients[:,0]
     
     gradients = gradients.repeat(d[0], 0).repeat(d[1], 1)
-    
+
     g00 = gradients[    :-d[0],    :-d[1]]
     g10 = gradients[d[0]:     ,    :-d[1]]
     g01 = gradients[    :-d[0],d[1]:     ]
@@ -59,8 +70,10 @@ def generate_perlin_noise_2d(
     t = interpolant(grid)
     n0 = n00*(1-t[:,:,0]) + t[:,:,0]*n10
     n1 = n01*(1-t[:,:,0]) + t[:,:,0]*n11
+
+    noise = np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
     
-    return np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
+    return noise
 
 
 def generate_fractal_noise_2d(
@@ -97,9 +110,11 @@ def generate_fractal_noise_2d(
     amplitude = 1
     
     for _ in range(octaves):
-        noise += amplitude * generate_perlin_noise_2d(
+        octave_noise = generate_perlin_noise_2d(
             shape, (frequency*res[0], frequency*res[1]), tileable, interpolant, seed
         )
+
+        noise += amplitude * octave_noise
         frequency *= lacunarity
         amplitude *= persistence
     

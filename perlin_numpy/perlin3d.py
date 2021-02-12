@@ -1,6 +1,6 @@
 import numpy as np
 
-from .perlin2d import interpolant
+from .perlin2d import interpolant, check_res
 
 
 def generate_perlin_noise_3d(
@@ -26,8 +26,11 @@ def generate_perlin_noise_3d(
     Raises:
         ValueError: If shape is not a multiple of res.
     """
+    check_res(res, shape)
+
     delta = (res[0] / shape[0], res[1] / shape[1], res[2] / shape[2])
     d = (shape[0] // res[0], shape[1] // res[1], shape[2] // res[2])
+
     grid = np.mgrid[0:res[0]:delta[0],0:res[1]:delta[1],0:res[2]:delta[2]]
     grid = np.mgrid[0:res[0]:delta[0],0:res[1]:delta[1],0:res[2]:delta[2]]
     grid = grid.transpose(1, 2, 3, 0) % 1
@@ -79,7 +82,9 @@ def generate_perlin_noise_3d(
     n0 = (1-t[:,:,:,1])*n00 + t[:,:,:,1]*n10
     n1 = (1-t[:,:,:,1])*n01 + t[:,:,:,1]*n11
 
-    return ((1-t[:,:,:,2])*n0 + t[:,:,:,2]*n1)
+    noise = ((1-t[:,:,:,2])*n0 + t[:,:,:,2]*n1)
+
+    return noise
 
 
 def generate_fractal_noise_3d(
@@ -115,13 +120,15 @@ def generate_fractal_noise_3d(
     amplitude = 1
 
     for _ in range(octaves):
-        noise += amplitude * generate_perlin_noise_3d(
+        octave_noise = generate_perlin_noise_3d(
             shape,
             (frequency*res[0], frequency*res[1], frequency*res[2]),
             tileable,
             interpolant,
             seed
         )
+        
+        noise += amplitude * octave_noise
         frequency *= lacunarity
         amplitude *= persistence
 
