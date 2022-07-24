@@ -2,6 +2,8 @@
 
 I wrote two articles on my blog about this project, the [first one](https://pvigier.github.io/2018/06/13/perlin-noise-numpy.html)  is about the generation of 2D noise while the [second one](https://pvigier.github.io/2018/11/02/3d-perlin-noise-numpy.html) is about the generation of 3D noise, feel free to read them!
 
+You can find implementations using [numba](https://numba.pydata.org/) [here](https://github.com/pvigier/perlin-numpy/issues/9).
+
 ## Description
 
 A fast and simple perlin noise generator using numpy.
