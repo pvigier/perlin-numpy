@@ -26,11 +26,6 @@ def generate_perlin_noise_3d(
     Raises:
         ValueError: If shape is not a multiple of res.
     """
-    delta = (res[0] / shape[0], res[1] / shape[1], res[2] / shape[2])
-    d = (shape[0] // res[0], shape[1] // res[1], shape[2] // res[2])
-    grid = np.mgrid[0:res[0]:delta[0],0:res[1]:delta[1],0:res[2]:delta[2]]
-    grid = np.mgrid[0:res[0]:delta[0],0:res[1]:delta[1],0:res[2]:delta[2]]
-    grid = grid.transpose(1, 2, 3, 0) % 1
     # Gradients
     theta = 2*np.pi*np.random.rand(res[0] + 1, res[1] + 1, res[2] + 1)
     phi = 2*np.pi*np.random.rand(res[0] + 1, res[1] + 1, res[2] + 1)
@@ -44,26 +39,33 @@ def generate_perlin_noise_3d(
         gradients[:,-1,:] = gradients[:,0,:]
     if tileable[2]:
         gradients[:,:,-1] = gradients[:,:,0]
-    gradients = gradients.repeat(d[0], 0).repeat(d[1], 1).repeat(d[2], 2)
-    g000 = gradients[    :-d[0],    :-d[1],    :-d[2]]
-    g100 = gradients[d[0]:     ,    :-d[1],    :-d[2]]
-    g010 = gradients[    :-d[0],d[1]:     ,    :-d[2]]
-    g110 = gradients[d[0]:     ,d[1]:     ,    :-d[2]]
-    g001 = gradients[    :-d[0],    :-d[1],d[2]:     ]
-    g101 = gradients[d[0]:     ,    :-d[1],d[2]:     ]
-    g011 = gradients[    :-d[0],d[1]:     ,d[2]:     ]
-    g111 = gradients[d[0]:     ,d[1]:     ,d[2]:     ]
+    grid = np.stack(np.meshgrid(
+        np.arange(0, shape[1]) * res[1] / shape[1],
+        np.arange(0, shape[0]) * res[0] / shape[0],
+        np.arange(0, shape[2]) * res[2] / shape[2],
+    ), axis=-1)[...,[1,0,2]]
+    grid_floor = np.floor(grid).astype(int)
+    grid_ceil = np.ceil(grid).astype(int)
+    g000 = gradients[grid_floor[...,0], grid_floor[...,1], grid_floor[...,2]]
+    g100 = gradients[ grid_ceil[...,0], grid_floor[...,1], grid_floor[...,2]]
+    g010 = gradients[grid_floor[...,0],  grid_ceil[...,1], grid_floor[...,2]]
+    g110 = gradients[ grid_ceil[...,0],  grid_ceil[...,1], grid_floor[...,2]]
+    g001 = gradients[grid_floor[...,0], grid_floor[...,1],  grid_ceil[...,2]]
+    g101 = gradients[ grid_ceil[...,0], grid_floor[...,1],  grid_ceil[...,2]]
+    g011 = gradients[grid_floor[...,0],  grid_ceil[...,1],  grid_ceil[...,2]]
+    g111 = gradients[ grid_ceil[...,0],  grid_ceil[...,1],  grid_ceil[...,2]]
     # Ramps
-    n000 = np.sum(np.stack((grid[:,:,:,0]  , grid[:,:,:,1]  , grid[:,:,:,2]  ), axis=3) * g000, 3)
-    n100 = np.sum(np.stack((grid[:,:,:,0]-1, grid[:,:,:,1]  , grid[:,:,:,2]  ), axis=3) * g100, 3)
-    n010 = np.sum(np.stack((grid[:,:,:,0]  , grid[:,:,:,1]-1, grid[:,:,:,2]  ), axis=3) * g010, 3)
-    n110 = np.sum(np.stack((grid[:,:,:,0]-1, grid[:,:,:,1]-1, grid[:,:,:,2]  ), axis=3) * g110, 3)
-    n001 = np.sum(np.stack((grid[:,:,:,0]  , grid[:,:,:,1]  , grid[:,:,:,2]-1), axis=3) * g001, 3)
-    n101 = np.sum(np.stack((grid[:,:,:,0]-1, grid[:,:,:,1]  , grid[:,:,:,2]-1), axis=3) * g101, 3)
-    n011 = np.sum(np.stack((grid[:,:,:,0]  , grid[:,:,:,1]-1, grid[:,:,:,2]-1), axis=3) * g011, 3)
-    n111 = np.sum(np.stack((grid[:,:,:,0]-1, grid[:,:,:,1]-1, grid[:,:,:,2]-1), axis=3) * g111, 3)
+    grid_frac = grid - np.floor(grid)
+    n000 = np.sum(np.stack((grid_frac[:,:,:,0]  , grid_frac[:,:,:,1]  , grid_frac[:,:,:,2]  ), axis=3) * g000, 3)
+    n100 = np.sum(np.stack((grid_frac[:,:,:,0]-1, grid_frac[:,:,:,1]  , grid_frac[:,:,:,2]  ), axis=3) * g100, 3)
+    n010 = np.sum(np.stack((grid_frac[:,:,:,0]  , grid_frac[:,:,:,1]-1, grid_frac[:,:,:,2]  ), axis=3) * g010, 3)
+    n110 = np.sum(np.stack((grid_frac[:,:,:,0]-1, grid_frac[:,:,:,1]-1, grid_frac[:,:,:,2]  ), axis=3) * g110, 3)
+    n001 = np.sum(np.stack((grid_frac[:,:,:,0]  , grid_frac[:,:,:,1]  , grid_frac[:,:,:,2]-1), axis=3) * g001, 3)
+    n101 = np.sum(np.stack((grid_frac[:,:,:,0]-1, grid_frac[:,:,:,1]  , grid_frac[:,:,:,2]-1), axis=3) * g101, 3)
+    n011 = np.sum(np.stack((grid_frac[:,:,:,0]  , grid_frac[:,:,:,1]-1, grid_frac[:,:,:,2]-1), axis=3) * g011, 3)
+    n111 = np.sum(np.stack((grid_frac[:,:,:,0]-1, grid_frac[:,:,:,1]-1, grid_frac[:,:,:,2]-1), axis=3) * g111, 3)
     # Interpolation
-    t = interpolant(grid)
+    t = interpolant(grid_frac)
     n00 = n000*(1-t[:,:,:,0]) + t[:,:,:,0]*n100
     n10 = n010*(1-t[:,:,:,0]) + t[:,:,:,0]*n110
     n01 = n001*(1-t[:,:,:,0]) + t[:,:,:,0]*n101
