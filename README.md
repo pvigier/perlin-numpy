@@ -32,6 +32,7 @@ The function `generate_perlin_noise_2d` generates a 2D texture of perlin noise. 
 * `shape`: shape of the generated array (tuple of 2 ints)
 * `res`: number of periods of noise to generate along each axis (tuple of 2 ints)
 * `tileable`: if the noise should be tileable along each axis (tuple of 2 bools)
+*  seed : seed for internal RNG if desired. if None use global RNG
 
 Note: `shape` must be a multiple of `res`
 
@@ -43,6 +44,7 @@ The function `generate_fractal_noise_2d` combines several octaves of 2D perlin n
 * `persistence`: scaling factor between two octaves (float)
 * `lacunarity`: frequency factor between two octaves (float)
 * `tileable`: if the noise should be tileable along each axis (tuple of 2 bools)
+*  seed : seed for internal RNG if desired. if None use global RNG
 
 Note: `shape` must be a multiple of `lacunarity^(octaves-1)*res`
 
@@ -54,6 +56,7 @@ The function `generate_perlin_noise_3d` generates a 3D texture of perlin noise. 
 * `shape`: shape of the generated array (tuple of 3 ints)
 * `res`: number of periods of noise to generate along each axis (tuple of 3 ints)
 * `tileable`: if the noise should be tileable along each axis (tuple of 3 bools)
+*  seed : seed for internal RNG if desired. if None use global RNG
 
 Note: `shape` must be a multiple of `res`
 
@@ -65,6 +68,7 @@ The function `generate_fractal_noise_2d` combines several octaves of 3D perlin n
 * `persistence`: scaling factor between two octaves (float)
 * `lacunarity`: frequency factor between two octaves (float)
 * `tileable`: if the noise should be tileable along each axis (tuple of 3 bools)
+*  seed : seed for internal RNG if desired. if None use global RNG
 
 Note: `shape` must be a multiple of `lacunarity^(octaves-1)*res`
 
